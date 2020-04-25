@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dao.userDao">
+
+    <!--查询全部用户-->
+    <select id="findAll" resultType="com.domain.User">
+        SELECT * FROM account;
+    </select>
+
+    <!--根据id查询用户-->
+    <select id="findById" resultType="com.domain.User" parameterType="int">
+        SELECT * FROM account WHERE id=#{id};
+    </select>
+
+    <!--保存用户-->
+    <insert id="saveUser" parameterType="com.domain.User">
+--  控制台返回 User{id=null, name='zl', money=1000.0} 如何将自增长的id返回？
+--         使用selectkey。keycolumn--数据库中的属性名  keyproperty--要返回值的名称  resultType--返回值类型
+        <selectKey keyColumn="id" keyProperty="id" resultType="int">
+            SELECT last_insert_id();
+        </selectKey>
+        insert into account(name , money) values (#{name},#{money});
+    </insert>
+
+    <!--修改用户信息-->
+    <update id="updateUser" parameterType="com.domain.User">
+        UPDATE account SET name=#{name},money=#{money} where id=#{id}
+    </update>
+
+    <!--删除用户信息-->
+    <delete id="deleteUser" parameterType="int">
+        DELETE FROM account WHERE id=#{id}
+    </delete>
+
+    <!--根据用户名模糊查询用户-->
+    <select id="findByName" resultType="com.domain.User" parameterType="String">
+        SELECT * FROM account WHERE name LIKE #{name};
+    </select>
+
+    <!--查询总记录条数-->
+    <select id="findTotal" resultType="int">
+        SELECT count(*) FROM account;
+    </select>
+</mapper>
